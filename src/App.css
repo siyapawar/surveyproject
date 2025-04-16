@@ -1,0 +1,300 @@
+/* Reset and base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  background: #f5f5f5;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibilityOptimized;
+}
+
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+/* Main container for all pages */
+.page-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: linear-gradient(135deg, #f5f5f5 0%, #e5e5e5 100%);
+}
+
+/* Common card style for all pages */
+.content-card {
+  background: white;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2.5rem;
+  border-radius: 16px;
+  box-shadow: 
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.content-card:hover {
+  box-shadow: 
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
+}
+
+/* Remove @apply-based classes. Use Tailwind utility classes directly in JSX instead. */
+
+/* Question options spacing */
+.options-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.75rem;
+  margin: 2rem 0;
+}
+
+@media (min-width: 640px) {
+  .options-grid {
+    grid-template-columns: repeat(10, 1fr);
+    gap: 1rem;
+  }
+}
+
+.option-button {
+  aspect-ratio: 1;
+  border-radius: 9999px; /* Changed from 12px to 9999px for perfect circle */
+  font-weight: 600;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.option-button:hover {
+  transform: translateY(-2px);
+}
+
+.option-button.selected {
+  background: #8B7355;
+  color: white;
+  border-color: #8B7355;
+}
+
+/* Enhanced transitions */
+.page-transition {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+/* Better spacing for question content */
+/* Use Tailwind classes in JSX for .question-content */
+
+/* Question styling */
+.question-text {
+  font-size: 1.5rem;
+  line-height: 1.4;
+  color: #2D2D2D;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+/* Navigation buttons container */
+.nav-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+  gap: 1rem;
+}
+
+/* Remove .nav-button @apply, use Tailwind classes in JSX */
+
+.loading-container,
+.error-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 50vh;
+  text-align: center;
+}
+
+.error-container h1 {
+  color: #dc3545;
+}
+
+h1 {
+  color: #333;
+  margin-bottom: 2rem;
+}
+
+p {
+  margin: 0.5rem 0;
+  color: #666;
+}
+
+/* Improve button focus states for accessibility */
+button:focus-visible {
+  outline: 2px solid #8B7355;
+  outline-offset: 2px;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F5F5DC;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #8B7355;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #6E5C44;
+}
+
+/* Decorative corner patterns */
+.corner-pattern {
+  position: fixed;
+  width: 240px;
+  height: 240px;
+  opacity: 0.05;
+  pointer-events: none;
+  background-image: radial-gradient(circle at center, #8B7355 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.corner-pattern-tl {
+  top: 0;
+  left: 0;
+  mask-image: linear-gradient(45deg, transparent 50%, black 50%);
+}
+
+.corner-pattern-br {
+  bottom: 0;
+  right: 0;
+  mask-image: linear-gradient(225deg, transparent 50%, black 50%);
+}
+
+/* Enhanced page transitions */
+.page-transition {
+  animation: pageTransition 0.5s ease-out forwards;
+}
+
+@keyframes pageTransition {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Button hover effects */
+.hover-lift {
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+
+.hover-lift:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(139, 115, 85, 0.15);
+}
+
+/* Progress bar animation */
+.progress-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.progress-bar {
+  height: 6px;
+  background: #8B7355;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+/* Card decorative elements */
+.card-pattern {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  opacity: 0.03;
+  pointer-events: none;
+  background-image: 
+    linear-gradient(45deg, #8B7355 25%, transparent 25%),
+    linear-gradient(-45deg, #8B7355 25%, transparent 25%);
+  background-size: 1px 1px;
+  mask-image: radial-gradient(circle at center, black, transparent 80%);
+}
