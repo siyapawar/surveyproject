@@ -4,16 +4,16 @@ import { decryptToken } from '../utils/tokenDecrypt';
 const SurveyContext = createContext();
 
 const questions = [
-  "How satisfied are you with the overall quality of our products?",
-  "How likely are you to recommend our services to colleagues?",
-  "How would you rate the value for money of our offerings?",
-  "How satisfied are you with our customer support response time?",
-  "How well do our products integrate with your existing workflows?",
-  "How would you rate the reliability of our services?",
-  "How satisfied are you with our product documentation?",
-  "How likely are you to purchase from us again?",
-  "How would you rate our company's innovation in the industry?",
-  "How satisfied are you with your overall experience with Acme Inc.?"
+  "How likely are you to recommend our company to a friend or colleague?",
+  "How satisfied are you with your overall experience with our company?",
+  "How easy was it to use our product/service?",
+  "How well did our solution meet your needs?",
+  "How responsive have we been to your questions or concerns?",
+  "How would you rate the quality of our product/service?",
+  "How likely are you to continue using our product/service?",
+  "How well does our product/service compare to competitors?",
+  "How satisfied are you with the value for money of our offering?",
+  "What’s one thing we could do to improve your experience with our company?"
 ];
 
 export function SurveyProvider({ children }) {
