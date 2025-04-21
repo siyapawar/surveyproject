@@ -14,6 +14,19 @@ export function QuestionScreen() {
   } = useSurvey();
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
+  const [userInfo, setUserInfo] = useState({ name: '', email: '' });
+  const [showUserForm, setShowUserForm] = useState(true);
+
+  const handleUserInfoChange = (e) => {
+    setUserInfo({ ...userInfo, [e.target.name]: e.target.value });
+  };
+
+  const handleUserFormSubmit = (e) => {
+    e.preventDefault();
+    if (userInfo.name.trim() && userInfo.email.trim()) {
+      setShowUserForm(false);
+    }
+  };
 
   const handleAnswer = (value) => {
     setAnswers(prev => ({ ...prev, [currentQuestion]: value }));
@@ -24,12 +37,18 @@ export function QuestionScreen() {
       setSubmitting(true);
       setSubmitError(null);
       try {
-        const response = await fetch('https://surveyproject-jmbn.onrender.com/api/survey', {
+        // Prepare answers as array of {question, answer}
+        const answersArray = questions.map((q, idx) => ({
+          question: q,
+          answer: answers[idx]
+        }));
+        const response = await fetch('https://surveyproject-jmbn.onrender.com/submit-survey', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            user: userData,
-            answers
+            name: userInfo.name,
+            email: userInfo.email,
+            answers: answersArray
           })
         });
         if (!response.ok) throw new Error('Failed to submit survey');
@@ -51,6 +70,48 @@ export function QuestionScreen() {
       setCurrentQuestion(prev => prev - 1);
     }
   };
+
+  // Show user info form before survey
+  if (showUserForm) {
+    return (
+      <div className="page-container">
+        <div className="content-card fade-in max-w-md mx-auto">
+          <h2 className="text-2xl font-bold mb-6">Tell us about yourself</h2>
+          <form onSubmit={handleUserFormSubmit} className="space-y-6">
+            <div>
+              <label className="block text-left mb-1 font-medium">Name</label>
+              <input
+                type="text"
+                name="name"
+                value={userInfo.name}
+                onChange={handleUserInfoChange}
+                className="w-full border border-[#E0E0E0] rounded-lg p-3 text-lg focus:outline-none focus:ring-2 focus:ring-[#8B7355]"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-left mb-1 font-medium">Email</label>
+              <input
+                type="email"
+                name="email"
+                value={userInfo.email}
+                onChange={handleUserInfoChange}
+                className="w-full border border-[#E0E0E0] rounded-lg p-3 text-lg focus:outline-none focus:ring-2 focus:ring-[#8B7355]"
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              className="w-full bg-[#8B7355] text-white py-3 rounded-lg font-medium text-lg hover:bg-[#76624A] transition-all duration-200"
+              disabled={!userInfo.name.trim() || !userInfo.email.trim()}
+            >
+              Start Survey
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="page-container">
