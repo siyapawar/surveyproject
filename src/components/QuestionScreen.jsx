@@ -1,35 +1,22 @@
-import { useSurvey } from './SurveyContext';
-import { useState } from 'react';
+import { useSurvey } from "./SurveyContext";
+import { useState } from "react";
 
 export function QuestionScreen() {
-  const { 
-    questions, 
-    currentQuestion, 
-    setCurrentQuestion, 
-    answers, 
-    setAnswers, 
+  const {
+    questions,
+    currentQuestion,
+    setCurrentQuestion,
+    answers,
+    setAnswers,
     setStage,
-    totalQuestions, 
-    userData
+    totalQuestions,
+    userData,
   } = useSurvey();
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
-  const [userInfo, setUserInfo] = useState({ name: '', email: '' });
-  const [showUserForm, setShowUserForm] = useState(true);
-
-  const handleUserInfoChange = (e) => {
-    setUserInfo({ ...userInfo, [e.target.name]: e.target.value });
-  };
-
-  const handleUserFormSubmit = (e) => {
-    e.preventDefault();
-    if (userInfo.name.trim() && userInfo.email.trim()) {
-      setShowUserForm(false);
-    }
-  };
 
   const handleAnswer = (value) => {
-    setAnswers(prev => ({ ...prev, [currentQuestion]: value }));
+    setAnswers((prev) => ({ ...prev, [currentQuestion]: value }));
   };
 
   const handleNext = async () => {
@@ -37,133 +24,115 @@ export function QuestionScreen() {
       setSubmitting(true);
       setSubmitError(null);
       try {
-        // Prepare answers as array of {question, answer}
         const answersArray = questions.map((q, idx) => ({
           question: q,
-          answer: answers[idx]
+          answer: answers[idx],
         }));
-        const response = await fetch('https://surveyproject-jmbn.onrender.com/submit-survey', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: userInfo.name,
-            email: userInfo.email,
-            answers: answersArray
-          })
-        });
-        if (!response.ok) throw new Error('Failed to submit survey');
-        setStage('thank-you');
+
+        const submissionData = {
+          userId: userData?.userId,
+          surveyId: userData?.surveyId,
+          answers: answersArray,
+        };
+
+        const response = await fetch(
+          "https://surveyproject-jmbn.onrender.com/submit-survey",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(submissionData),
+          }
+        );
+        if (!response.ok) throw new Error("Failed to submit survey");
+        setStage("thank-you");
       } catch (err) {
-        setSubmitError('There was a problem submitting your survey. Please try again.');
+        console.error("Submission error:", err);
+        setSubmitError(
+          "There was a problem submitting your survey. Please try again."
+        );
       } finally {
         setSubmitting(false);
       }
     } else {
-      setCurrentQuestion(prev => prev + 1);
+      setCurrentQuestion((prev) => prev + 1);
     }
   };
 
   const handleBack = () => {
     if (currentQuestion === 0) {
-      setStage('welcome');
+      setStage("welcome");
     } else {
-      setCurrentQuestion(prev => prev - 1);
+      setCurrentQuestion((prev) => prev - 1);
     }
   };
 
-  // Show user info form before survey
-  if (showUserForm) {
-    return (
-      <div className="page-container">
-        <div className="content-card fade-in max-w-md mx-auto">
-          <h2 className="text-2xl font-bold mb-6">Tell us about yourself</h2>
-          <form onSubmit={handleUserFormSubmit} className="space-y-6">
-            <div>
-              <label className="block text-left mb-1 font-medium">Name</label>
-              <input
-                type="text"
-                name="name"
-                value={userInfo.name}
-                onChange={handleUserInfoChange}
-                className="w-full border border-[#E0E0E0] rounded-lg p-3 text-lg focus:outline-none focus:ring-2 focus:ring-[#8B7355]"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-left mb-1 font-medium">Email</label>
-              <input
-                type="email"
-                name="email"
-                value={userInfo.email}
-                onChange={handleUserInfoChange}
-                className="w-full border border-[#E0E0E0] rounded-lg p-3 text-lg focus:outline-none focus:ring-2 focus:ring-[#8B7355]"
-                required
-              />
-            </div>
-            <button
-              type="submit"
-              className="w-full bg-[#8B7355] text-white py-3 rounded-lg font-medium text-lg hover:bg-[#76624A] transition-all duration-200"
-              disabled={!userInfo.name.trim() || !userInfo.email.trim()}
-            >
-              Start Survey
-            </button>
-          </form>
-        </div>
-      </div>
-    );
-  }
+  const isNextDisabled =
+    submitting ||
+    answers[currentQuestion] === undefined ||
+    (currentQuestion === totalQuestions - 1 &&
+      (!answers[currentQuestion] ||
+        String(answers[currentQuestion]).trim() === ""));
 
   return (
+    // Use CSS classes from App.css
     <div className="page-container">
       <div className="content-card fade-in">
         {/* Progress indicator */}
-        <div className="mb-8">
-          <div className="flex justify-center text-sm text-[#666] mb-2">
-            <div className="font-medium">Question {currentQuestion + 1} of 10</div>
+        <div className="progress-container">
+          <div className="progress-info">
+            <div>
+              Question {currentQuestion + 1} of {totalQuestions}
+            </div>
           </div>
-          <div className="w-full bg-[#F0EBE6] h-2 rounded-full overflow-hidden">
+          <div className="progress-bar-bg">
             <div
-              className="bg-[#8B7355] h-full rounded-full transition-all duration-500"
-              style={{ width: `${((currentQuestion + 1) / 10) * 100}%` }}
+              className="progress-bar-fg"
+              style={{
+                width: `${((currentQuestion + 1) / totalQuestions) * 100}%`,
+              }}
             />
           </div>
         </div>
 
         {/* Question */}
-        <h2 className="question-text mb-12">
-          {questions[currentQuestion]}
-        </h2>
+        <h2 className="h2">{questions[currentQuestion]}</h2>
 
-        {/* Render scale for all but last question, textarea for last */}
+        {/* Render scale or textarea */}
         {currentQuestion !== totalQuestions - 1 ? (
-          <div className="w-full max-w-6xl mx-auto px-4 mb-12">
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(10, 1fr)', gap: '2rem' }}>
+          <div style={{ marginBottom: "3rem" }}>
+            {" "}
+            {/* ~mb-12 */}
+            <div className="scale-grid">
               {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((value) => (
                 <button
                   key={value}
                   onClick={() => handleAnswer(value)}
-                  className={`w-20 h-20 rounded-full flex items-center justify-center 
-                             text-4xl font-semibold transition-all duration-300 ease-in-out
-                             transform hover:scale-110 hover:shadow-lg aspect-square
-                             ${answers[currentQuestion] === value 
-                               ? 'bg-[#8B7355] text-white shadow-xl scale-105' 
-                               : 'bg-[#F5F5F5] hover:bg-[#E8E8E8] text-[#444] hover:text-[#222]'}`}
+                  // Apply scale-button styles, add 'selected' class conditionally
+                  className={`scale-button ${
+                    answers[currentQuestion] === value ? "selected" : ""
+                  }`}
                 >
                   {value}
                 </button>
               ))}
             </div>
+            <div className="scale-labels">
+              <span>Not likely</span>
+              <span>Very likely</span>
+            </div>
           </div>
         ) : (
-          <div className="w-full max-w-2xl mx-auto mb-12">
+          <div className="textarea-container">
             <textarea
-              className="w-full min-h-[120px] p-4 border border-[#E0E0E0] rounded-lg text-lg focus:outline-none focus:ring-2 focus:ring-[#8B7355] transition"
-              placeholder="Type your comments here..."
-              value={answers[currentQuestion] || ''}
-              onChange={e => handleAnswer(e.target.value)}
+              className="textarea"
+              placeholder="Share your thoughts..."
+              value={answers[currentQuestion] || ""}
+              onChange={(e) => handleAnswer(e.target.value)}
               maxLength={1000}
             />
-            <div className="text-right text-xs text-gray-400 mt-1">{(answers[currentQuestion] || '').length}/1000</div>
+            <div className="char-counter">
+              {(answers[currentQuestion] || "").length}/1000
+            </div>
           </div>
         )}
 
@@ -171,29 +140,28 @@ export function QuestionScreen() {
         <div className="nav-buttons">
           <button
             onClick={handleBack}
-            className="bg-[#F5F5F5] text-[#444] px-6 py-2.5 rounded-lg font-medium
-                     hover:bg-[#E8E8E8] transition-all duration-200"
+            // Apply button and button-secondary styles
+            className="button button-secondary"
             disabled={submitting}
           >
             Back
           </button>
           <button
             onClick={handleNext}
-            disabled={submitting || (currentQuestion !== totalQuestions - 1
-              ? answers[currentQuestion] === undefined
-              : !answers[currentQuestion] || answers[currentQuestion].trim() === '')}
-            className={`px-6 py-2.5 rounded-lg font-medium transition-all duration-200
-              ${(currentQuestion !== totalQuestions - 1
-                ? answers[currentQuestion] === undefined
-                : !answers[currentQuestion] || answers[currentQuestion].trim() === '' || submitting)
-                ? 'bg-[#E0E0E0] text-[#999] cursor-not-allowed'
-                : 'bg-[#8B7355] text-white hover:bg-[#76624A]'}`}
+            disabled={isNextDisabled}
+            // Apply button and button-primary styles
+            className="button button-primary"
           >
-            {submitting ? 'Submitting...' : (currentQuestion === totalQuestions - 1 ? 'Finish' : 'Next')}
+            {submitting
+              ? "Submitting..."
+              : currentQuestion === totalQuestions - 1
+              ? "Finish Survey"
+              : "Next"}
           </button>
         </div>
         {submitError && (
-          <div className="text-red-500 text-center mt-4">{submitError}</div>
+          // Apply submit-error style
+          <div className="submit-error">{submitError}</div>
         )}
       </div>
     </div>

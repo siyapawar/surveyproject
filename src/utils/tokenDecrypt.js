@@ -1,6 +1,6 @@
-import CryptoJS from 'crypto-js';
+import CryptoJS from "crypto-js";
 
-const SECRET_KEY = 'ACME_SURVEY_SECRET'; // In production, this should be in environment variables
+const SECRET_KEY = "ACME_SURVEY_SECRET"; // In production, this should be in environment variables
 
 // Mock token decryption for development
 export const decryptToken = (token) => {
@@ -10,10 +10,10 @@ export const decryptToken = (token) => {
     return {
       userId: decoded.userId,
       language: decoded.language,
-      surveyId: decoded.surveyId
+      surveyId: decoded.surveyId,
     };
   } catch (error) {
-    console.error('Token decryption failed:', error);
+    console.error("Token decryption failed:", error);
     return null;
   }
 };

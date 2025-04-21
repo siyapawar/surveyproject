@@ -1,5 +1,5 @@
-import { createContext, useContext, useState, useEffect } from 'react';
-import { decryptToken } from '../utils/tokenDecrypt';
+import { createContext, useContext, useState, useEffect } from "react";
+import { decryptToken } from "../utils/tokenDecrypt";
 
 const SurveyContext = createContext();
 
@@ -13,19 +13,19 @@ const questions = [
   "How likely are you to continue using our product/service?",
   "How well does our product/service compare to competitors?",
   "How satisfied are you with the value for money of our offering?",
-  "What’s one thing we could do to improve your experience with our company?"
+  "What’s one thing we could do to improve your experience with our company?",
 ];
 
 export function SurveyProvider({ children }) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState({});
-  const [stage, setStage] = useState('welcome');
+  const [stage, setStage] = useState("welcome");
   const [userData, setUserData] = useState(null);
 
   useEffect(() => {
     // Get token from URL
     const params = new URLSearchParams(window.location.search);
-    const token = params.get('token');
+    const token = params.get("token");
 
     if (token) {
       try {
@@ -34,7 +34,7 @@ export function SurveyProvider({ children }) {
           setUserData(decoded);
         }
       } catch (error) {
-        console.error('Error decoding token:', error);
+        console.error("Error decoding token:", error);
       }
     }
   }, []);
@@ -48,20 +48,18 @@ export function SurveyProvider({ children }) {
     stage,
     setStage,
     totalQuestions: questions.length,
-    userData
+    userData,
   };
 
   return (
-    <SurveyContext.Provider value={value}>
-      {children}
-    </SurveyContext.Provider>
+    <SurveyContext.Provider value={value}>{children}</SurveyContext.Provider>
   );
 }
 
 export function useSurvey() {
   const context = useContext(SurveyContext);
   if (!context) {
-    throw new Error('useSurvey must be used within a SurveyProvider');
+    throw new Error("useSurvey must be used within a SurveyProvider");
   }
   return context;
 }

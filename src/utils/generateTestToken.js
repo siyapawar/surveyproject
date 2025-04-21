@@ -3,9 +3,9 @@ const generateToken = () => {
   const testData = {
     userId: "ACME_123",
     language: "en",
-    surveyId: "SURVEY_2025_Q2"
+    surveyId: "SURVEY_2025_Q2",
   };
-  
+
   // For testing purposes, we'll just base64 encode the data
   return btoa(JSON.stringify(testData));
 };
