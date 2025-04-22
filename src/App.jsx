@@ -1,8 +1,4 @@
 import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useLocation } from "react-router-dom";
-import queryString from "query-string";
-import { decryptToken } from "./utils/tokenDecrypt";
 import { SurveyProvider, useSurvey } from "./components/SurveyContext";
 import { WelcomeScreen } from "./components/WelcomeScreen";
 import { QuestionScreen } from "./components/QuestionScreen";
@@ -49,36 +45,6 @@ function SurveyContent() {
 }
 
 function App() {
-  const { t, i18n } = useTranslation();
-  const location = useLocation();
-
-  useEffect(() => {
-    const { token } = queryString.parse(location.search);
-
-    if (!token) {
-      console.error("No token provided");
-      return;
-    }
-
-    try {
-      const decryptedData = decryptToken(token);
-
-      if (!decryptedData) {
-        console.error(t("invalidToken"));
-        return;
-      }
-
-      const { language } = decryptedData;
-
-      if (language && ["en", "hi", "mr"].includes(language)) {
-        i18n.changeLanguage(language);
-      }
-    } catch (err) {
-      console.error(t("error"));
-      console.error("Error processing token:", err);
-    }
-  }, [location.search, t, i18n]);
-
   return (
     <SurveyProvider>
       <SurveyContent />

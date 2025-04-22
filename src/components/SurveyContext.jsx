@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { decryptToken } from "../utils/tokenDecrypt";
+import { v4 as uuidv4 } from "uuid";
 
 const SurveyContext = createContext();
 
@@ -16,28 +16,37 @@ const questions = [
   "What’s one thing we could do to improve your experience with our company?",
 ];
 
+const LOCAL_STORAGE_KEY = "surveySubmissionId";
+
 export function SurveyProvider({ children }) {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState({});
-  const [stage, setStage] = useState("welcome");
-  const [userData, setUserData] = useState(null);
+  const [stage, setStage] = useState("loading");
+  const [submissionId, setSubmissionId] = useState(null);
 
   useEffect(() => {
-    // Get token from URL
-    const params = new URLSearchParams(window.location.search);
-    const token = params.get("token");
-
-    if (token) {
-      try {
-        const decoded = decryptToken(token);
-        if (decoded) {
-          setUserData(decoded);
-        }
-      } catch (error) {
-        console.error("Error decoding token:", error);
-      }
+    // Check localStorage for an existing submission ID
+    const existingId = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (existingId) {
+      setSubmissionId(existingId);
+      setStage("thank-you"); // If ID exists, user has submitted before
+    } else {
+      // Generate a new ID for this session if none exists
+      const newId = uuidv4();
+      setSubmissionId(newId);
+      setStage("welcome"); // Start fresh
     }
   }, []);
+
+  // Function to reset the survey and generate a new ID
+  const resetSurvey = () => {
+    localStorage.removeItem(LOCAL_STORAGE_KEY); // Clear old ID
+    const newId = uuidv4();
+    setSubmissionId(newId);
+    setCurrentQuestion(0);
+    setAnswers({});
+    setStage("welcome");
+  };
 
   const value = {
     questions,
@@ -48,7 +57,8 @@ export function SurveyProvider({ children }) {
     stage,
     setStage,
     totalQuestions: questions.length,
-    userData,
+    submissionId,
+    resetSurvey,
   };
 
   return (

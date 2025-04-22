@@ -1,38 +1,33 @@
 import { useSurvey } from "./SurveyContext";
 
 export function ThankYouScreen() {
-  const { setStage, setCurrentQuestion, setAnswers } = useSurvey();
+  // Get resetSurvey function from context
+  const { resetSurvey } = useSurvey();
 
-  const handleReturnHome = () => {
-    setStage("welcome");
-    setCurrentQuestion(0);
-    setAnswers({});
-  };
+  // No need for handleReturnHome anymore, use resetSurvey directly
 
   return (
-    // Use CSS classes from App.css
     <div className="page-container">
       <div className="content-card fade-in">
-        {/* Apply h1 styling */}
         <h1 className="h1">Thank You!</h1>
-
-        {/* Apply divider style */}
         <div className="divider" />
-
-        {/* Apply text-xl styling */}
-        <p className="text-xl" style={{ marginBottom: "3rem" }}>
+        <p className="text-xl" style={{ marginBottom: "1.5rem" }}>
           {" "}
-          {/* ~mb-12 */}
-          We appreciate your valuable feedback. Your responses will help us
-          improve our products and services.
+          {/* Reduced margin */}
+          We appreciate your valuable feedback. Your responses have been
+          recorded.
+        </p>
+        <p className="text-sm text-brown-600" style={{ marginBottom: "3rem" }}>
+          If you made a mistake or want to change your answers, you can submit
+          the survey again.
         </p>
 
+        {/* Button to reset the survey */}
         <button
-          onClick={handleReturnHome}
-          // Apply button and button-primary styles
-          className="button button-primary"
+          onClick={resetSurvey} // Call resetSurvey on click
+          className="button button-secondary" // Use secondary style
         >
-          Return to Home
+          Submit Again
         </button>
       </div>
     </div>

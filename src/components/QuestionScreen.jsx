@@ -1,5 +1,9 @@
 import { useSurvey } from "./SurveyContext";
 import { useState } from "react";
+import { supabase } from "../utils/supabaseClient";
+
+// Define the localStorage key constant, matching SurveyContext
+const LOCAL_STORAGE_KEY = "surveySubmissionId";
 
 export function QuestionScreen() {
   const {
@@ -10,11 +14,14 @@ export function QuestionScreen() {
     setAnswers,
     setStage,
     totalQuestions,
-    userData,
+    // Remove userData
+    submissionId, // Get submissionId from context
   } = useSurvey();
+  // ... existing state (submitting, submitError) ...
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
 
+  // ... existing handleAnswer ...
   const handleAnswer = (value) => {
     setAnswers((prev) => ({ ...prev, [currentQuestion]: value }));
   };
@@ -24,31 +31,37 @@ export function QuestionScreen() {
       setSubmitting(true);
       setSubmitError(null);
       try {
+        // ... existing answersArray mapping ...
         const answersArray = questions.map((q, idx) => ({
           question: q,
           answer: answers[idx],
         }));
 
         const submissionData = {
-          userId: userData?.userId,
-          surveyId: userData?.surveyId,
+          // Use submissionId instead of user_id/survey_id/language
+          submission_id: submissionId, // Rename field to submission_id
           answers: answersArray,
+          // Add language if you have another way to determine it, otherwise remove
+          // language: 'en',
         };
 
-        const response = await fetch(
-          "https://surveyproject-jmbn.onrender.com/submit-survey",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(submissionData),
-          }
-        );
-        if (!response.ok) throw new Error("Failed to submit survey");
+        // Submit to Supabase
+        const { error } = await supabase
+          .from("survey_responses")
+          // Use upsert to replace if submission_id already exists
+          .upsert([submissionData], { onConflict: "submission_id" });
+
+        if (error) throw error;
+
+        // Save submission ID to localStorage on successful submission
+        localStorage.setItem(LOCAL_STORAGE_KEY, submissionId);
+
         setStage("thank-you");
       } catch (err) {
+        // ... existing error handling ...
         console.error("Submission error:", err);
         setSubmitError(
-          "There was a problem submitting your survey. Please try again."
+          `There was a problem submitting your survey: ${err.message}. Please try again.`
         );
       } finally {
         setSubmitting(false);
@@ -58,14 +71,16 @@ export function QuestionScreen() {
     }
   };
 
+  // ... existing handleBack ...
   const handleBack = () => {
     if (currentQuestion === 0) {
-      setStage("welcome");
+      setStage("welcome"); // Go back to welcome if on first question
     } else {
       setCurrentQuestion((prev) => prev - 1);
     }
   };
 
+  // ... existing isNextDisabled ...
   const isNextDisabled =
     submitting ||
     answers[currentQuestion] === undefined ||
@@ -73,11 +88,11 @@ export function QuestionScreen() {
       (!answers[currentQuestion] ||
         String(answers[currentQuestion]).trim() === ""));
 
+  // ... existing return JSX ...
   return (
-    // Use CSS classes from App.css
     <div className="page-container">
       <div className="content-card fade-in">
-        {/* Progress indicator */}
+        {/* ... progress indicator ... */}
         <div className="progress-container">
           <div className="progress-info">
             <div>
@@ -94,10 +109,10 @@ export function QuestionScreen() {
           </div>
         </div>
 
-        {/* Question */}
+        {/* ... question ... */}
         <h2 className="h2">{questions[currentQuestion]}</h2>
 
-        {/* Render scale or textarea */}
+        {/* ... scale or textarea ... */}
         {currentQuestion !== totalQuestions - 1 ? (
           <div style={{ marginBottom: "3rem" }}>
             {" "}
@@ -136,7 +151,7 @@ export function QuestionScreen() {
           </div>
         )}
 
-        {/* Navigation Buttons */}
+        {/* ... navigation buttons ... */}
         <div className="nav-buttons">
           <button
             onClick={handleBack}
@@ -159,6 +174,7 @@ export function QuestionScreen() {
               : "Next"}
           </button>
         </div>
+        {/* ... submit error ... */}
         {submitError && (
           // Apply submit-error style
           <div className="submit-error">{submitError}</div>
