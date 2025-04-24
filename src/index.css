@@ -1,38 +1,43 @@
-/* Keep font-family definition here as a base */
+/**
+ * Keep font-family definition here as a base
+ *
+ * @format
+ */
+
 :root {
-  font-family: "Spectral", Inter, system-ui, -apple-system, BlinkMacSystemFont,
-    "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
-    sans-serif;
-  line-height: 1.5;
-  font-weight: 400; /* Default font weight */
+	font-family: "Spectral", Inter, system-ui, -apple-system, BlinkMacSystemFont,
+		"Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+		sans-serif;
+	line-height: 1.5;
+	font-weight: 400; /* Default font weight */
 
-  /* Define theme colors as CSS variables */
-  --color-sand-50: #fdfbf7;
-  --color-sand-100: #fbf6ef;
-  --color-brown-100: #f4ece3;
-  --color-brown-200: #e8d8c7;
-  --color-brown-300: #dcbba5;
-  --color-brown-400: #cea98a;
-  --color-brown-500: #b98e6f;
-  --color-brown-600: #a37558;
-  --color-brown-700: #8c6046;
-  --color-brown-800: #754f3a;
-  --color-brown-900: #624131;
-  --color-red-600: #dc2626; /* Example error color */
-  --color-white: #ffffff;
+	/* Define theme colors as CSS variables */
+	--color-sand-50: #fdfbf7;
+	--color-sand-100: #fbf6ef;
+	--color-brown-100: #f4ece3;
+	--color-brown-200: #e8d8c7;
+	--color-brown-300: #dcbba5;
+	--color-brown-400: #cea98a;
+	--color-brown-500: #b98e6f;
+	--color-brown-600: #a37558;
+	--color-brown-700: #8c6046;
+	--color-brown-800: #754f3a;
+	--color-brown-900: #624131;
+	--color-red-600: #dc2626; /* Example error color */
+	--color-white: #ffffff;
 
-  color-scheme: light; /* Assuming a light theme */
-  color: var(--color-brown-900); /* Default text color from theme */
-  background-color: var(--color-sand-50); /* Default background from theme */
+	color-scheme: light; /* Assuming a light theme */
+	color: var(--color-brown-900); /* Default text color from theme */
+	background-color: var(--color-sand-50); /* Default background from theme */
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+	font-synthesis: none;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 /* Use theme colors for selection */
 ::selection {
-  background-color: var(--color-brown-200);
-  color: var(--color-brown-900);
+	background-color: var(--color-brown-200);
+	color: var(--color-brown-900);
 }
